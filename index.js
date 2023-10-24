@@ -1,34 +1,54 @@
-const makeVCComnd = require('./commands/makeVC.js');
-
 const { Client, Events, GatewayIntentBits } = require('discord.js');
-const { token } = require('./config.json');
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const { token, testerId} = require('./config.json');
+const guildId = testerId;
 
-
-client.once(Events.ClientReady, c => {
-    console.log(`${c.user.tag} is ready\n`);
+const client = new Client({
+	intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildMembers,
+	],
 });
 
-client.on(Events.InteractionCreate, async interaction => {
 
-    if (!interaction.isChatInputCommand()) return;
+const makeVCComnd = require('./commands/makeVC.js');
 
-    if (interaction.commandName === makeVCComnd.data.name) {
-        try {
-            await makeVCComnd.execute(interaction);
-        } catch (error) {
-            console.error(error);
-            if (interaction.replied || interaction.deferred) {
-                await interaction.followUp({ content: 'excecution failed', ephemeral: true });
-            } else {
-                await interaction.reply({ content: 'excecution failed', ephemeral: true });
-            }
-        }
-    } else {
-        console.error(`${interaction.commandName} the command doesn't exist`);
+client.once(Events.ClientReady, async () => {
+	console.log(`Muse is ready\n`);
+	await client.application.commands.set(makeVCComnd.data, guildId);
+});
+
+client.on('messageCreate', message => {
+    if (message.author.bot) {
+        return;
+    }
+
+    if (message.content == 'hi') {
+        message.channel.send('hi!');
     }
 });
 
+client.on(Events.InteractionCreate, async interaction => {
+	
+	if (!interaction.isChatInputCommand()) return;
 
-// ログインします
+	//if (interaction.commandName === makeVCComnd.data.name) {
+	if (interaction.commandName === 'makevc') {
+
+		try {
+			await makeVCComnd.execute(interaction);
+		} catch (error) {
+			console.error(error);
+			if (interaction.replied || interaction.deferred) {
+				await interaction.followUp({ content: 'excecution failed', ephemeral: true });
+			} else {
+				await interaction.reply({ content: 'excecution failed', ephemeral: true });
+			}
+		}
+	} else {
+		console.error(`${interaction.commandName} the command doesn't exist`);
+	}
+});
+
 client.login(token);

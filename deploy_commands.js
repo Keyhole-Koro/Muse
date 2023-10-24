@@ -1,21 +1,23 @@
-const { REST, Routes } = require('discord.js');
+const { REST } = require('discord.js');
+const { Routes } = require('discord-api-types/v10');
+const { applicationId, testerId, token } = require('./config.json');
 
-const greetCmnd = require('./commands/makeVC.js');
+const guildId = testerId;
 
-const { applicationId, guildId, token } = require('./config.json');
+const makeVCComnd = require('./commands/makeVC.js');
 
-const commands = [greetCmnd.data.toJSON()];
-
-const rest = new REST({ version: '10' }).setToken(token);
+const commands = [makeVCComnd.data.toJSON()];
+const rest = new REST({ version: 'v10' }).setToken(token);
 
 (async () => {
     try {
         await rest.put(
             Routes.applicationGuildCommands(applicationId, guildId),
-            { body: commands },
+            { body: commands }
         );
-        console.log('the command is set');
+        console.log('The command is set');
     } catch (error) {
-        console.error('an error happened while setting the command:', error);
+        console.error('An error occurred while setting the command:', error);
     }
 })();
+

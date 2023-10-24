@@ -1,25 +1,26 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { vc_category } = require('./config.json');
+const { vc_category } = require('../config.json');
 
 const createVoiceChannel = require('../utils.js');
 
+const makeVCCommand = new SlashCommandBuilder()
+    .setName('makevc')
+    .setDescription('This is for making voice channel, disappears in 24 hours')
+    .addStringOption(option =>
+        option.setName('vcname')
+        .setDescription('Enter the voice channel name you want to create')
+        .setRequired(true));
+
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('makeVC')
-        .setDescription('This is for making voice channel, disappears in 24 hours')
-        .addStringOption(option =>
-            option.setName('vcname')
-            .setDescription('Enter the voice channel name you want to create')
-            .setRequired(true)),
+    data: [makeVCCommand.toJSON()],
     async execute(interaction) {
         //make sure cooltime
         
         const guild = interaction.guild;
         const vcName = interaction.options.getString('vcname');
 
-        // Create a voice channel
-        try {
-            const voiceChannel = await createVoiceChannel(guild, vcName, vc_category)
+		try {
+            const voiceChannel = await createVoiceChannel(interaction, guild, vcName, vc_category)
             await interaction.reply(`Voice channel "${voiceChannel.name}" created successfully! It will disappear in 24 hours.`);
             
             //replace here to use databse
