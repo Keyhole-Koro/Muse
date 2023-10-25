@@ -21,12 +21,12 @@ module.exports = {
 
 		try {
             const voiceChannel = await createVoiceChannel(interaction, guild, vcName, vc_category)
-            await interaction.reply(`Voice channel "${voiceChannel.name}" created successfully! It will disappear in 24 hours.`);
+            await interaction.reply(`Voice channel "${voiceChannel}" created successfully! It will disappear in 24 hours.`);
             
             //replace here to use databse
             setTimeout(async () => {
                 await voiceChannel.delete();
-                console.log(`Voice channel "${voiceChannel.name}" deleted after 24 hours.`);
+                console.log(`Voice channel "${voiceChannel}" deleted after 24 hours.`);
             }, 24 * 60 * 60 * 1000);
             
         } catch (error) {

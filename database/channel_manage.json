@@ -1,0 +1,44 @@
+[
+  {
+    "channel": {
+      "id": "123456",
+      "name": "Channel Name"
+    },
+    "category": {
+      "id": 1,
+      "name": "Sample Category"
+    },
+    "maker": {
+      "id": "789012",
+      "name": "Keyhole"
+    },
+    "date_made": "2023-10-25",
+    "due": "2023-12-25",
+    "if_exist": true,
+    "tags": [
+      "tag1",
+      "tag2"
+    ]
+  },
+  {
+    "channel": {
+      "id": "123456",
+      "name": "Channel Name"
+    },
+    "category": {
+      "id": 1,
+      "name": "Sample Category"
+    },
+    "maker": {
+      "id": "789012",
+      "name": "Keyhole"
+    },
+    "date_made": "2023-10-25",
+    "due": "2023-11-25",
+    "if_exist": true,
+    "tags": [
+      "tag1",
+      "tag2"
+    ]
+  }
+]
