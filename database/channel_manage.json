@@ -1,29 +1,5 @@
 [
   {
-    "type": "quickCreate",
-    "channel": {
-      "id": "123456",
-      "name": "Channel Name"
-    },
-    "category": {
-      "id": 1,
-      "name": "Sample Category"
-    },
-    "maker": {
-      "id": "789012",
-      "name": "Keyhole"
-    },
-    "date": {
-      "made": "October 31, 2023 at 10:00:56 AM GMT+9",
-      "due": "November 1, 2023 at 10:00:56 AM GMT+9"
-    },
-    "if_exist": true,
-    "tags": [
-      "tag1",
-      "tag2"
-    ]
-  },
-  {
     "type": "quickCreatedChannel",
     "channel": {
       "id": "123456",
@@ -33,37 +9,14 @@
       "id": 1,
       "name": "Sample Category"
     },
-    "maker": {
+    "user": {
       "id": "789012",
-      "name": "Keyhole"
+      "name": "Keyhole",
+      "name_id": "korokoro"
     },
     "date": {
-      "made": "October 31, 2023 at 10:02:14 AM GMT+9",
-      "due": "November 1, 2023 at 10:02:14 AM GMT+9"
-    },
-    "if_exist": true,
-    "tags": [
-      "tag1",
-      "tag2"
-    ]
-  },
-  {
-    "type": "quickCreatedChannel",
-    "channel": {
-      "id": "123456",
-      "name": "Channel Name"
-    },
-    "category": {
-      "id": 1,
-      "name": "Sample Category"
-    },
-    "maker": {
-      "id": "789012",
-      "name": "Keyhole"
-    },
-    "date": {
-      "made": "October 31, 2023 at 11:19:59 AM GMT+9",
-      "due": "November 1, 2023 at 11:19:59 AM GMT+9"
+      "created_at": "2023-11-06T23:25:51.000Z",
+      "due": "2023-11-07T23:25:51.000Z"
     },
     "available": true,
     "tags": [

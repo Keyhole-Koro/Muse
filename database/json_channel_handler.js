@@ -11,8 +11,7 @@ function JP_date() {
 	const [hour, minute, second] = timeStr.split(":");
 	//the month parameter in the Date constructor is zero-based, meaning January is represented as 0, February as 1, March as 2, and so on.
 	const date_current_date = new Date(+year, +month - 1, +day, +hour, +minute, +second);
-	console.log(+year, +month, +day, +hour, +minute, +second);
-	console.log(date_current_date);
+
 	return date_current_date;
 }
 //replace date to JP_date
@@ -114,13 +113,13 @@ class database {
 	}
 	
 	removeExpiredChannels() {
-		const cur_time = new Date();
+		const cur_time = JP_date();
 		this.removalMethod(this.data);
 		this.writeDataToFile(this.data);
 	}
 }
 
-function constructChannel(type, channel, maker, category, date, tags) {
+function constructChannel(type, channel, user, category, date, tags) {
 	const arrangedChannel = {
 		"type": type || "",
 		"channel": {
@@ -131,12 +130,13 @@ function constructChannel(type, channel, maker, category, date, tags) {
 			"id": category.id || -1,
 			"name": category.name || ""
 		},
-		"maker": {
-			"id": maker.id || "",
-			"name": maker.name || ""
+		"user": {
+			"id": user.id || "",
+			"name": user.name || "",
+			"name_id": user.name_id || "",
 		},
 		"date" : {
-			"made": date.made || "",
+			"created_at": date.created_at || "",
 			"due": date.due || undefined,
 		},
 		"available": true,
@@ -146,9 +146,9 @@ function constructChannel(type, channel, maker, category, date, tags) {
 	return arrangedChannel;
 }
 
-//you can pass 0
+//you can pass 0 as parameters
 function constructDate(daysToAdd, hoursToAdd) {
-	const currentDate = new Date();
+	const currentDate = JP_date();
 
 	const dueDate = new Date(currentDate);
 	
@@ -159,14 +159,10 @@ function constructDate(daysToAdd, hoursToAdd) {
 	if (hoursToAdd !== undefined && hoursToAdd !== null && hoursToAdd > 0) {
 		dueDate.setHours(currentDate.getHours() + hoursToAdd);
 	}
-	
-	const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' };
-	const made = currentDate.toLocaleDateString('en-US', options);
-	const due = dueDate.toLocaleDateString('en-US', options);
 
 	const date = {
-		"made": made,
-		"due": due,
+		"created_at": currentDate,
+		"due": dueDate,
 	};
 
 	return date;
@@ -188,22 +184,23 @@ const category = {
 	"name": "Sample Category"
 };
 
-const maker = {
+const user = {
 	"id": "789012",
-	"name": "Keyhole"
+	"name": "Keyhole",
+	"name_id": "korokoro"
 };
 
 const date = constructDate(1);
 
 const tags = ["tag1", "tag2"];
 
-const arrangedChannel = constructChannel("quickCreatedChannel", channel, maker, category, date, tags);
+const arrangedChannel = constructChannel("quickCreatedChannel", channel, user, category, date, tags);
 console.log(arrangedChannel);
 
 const db = new database('./channel_manage.json', id_channel, removeChannel);
 
 db.removeExpiredChannels();
 
-//db.insertData(arrangedChannel);
+db.insertData(arrangedChannel);
 //db.modifyData("123456", { "due": "2023-12-25" });
 //db.deleteData("123456");
