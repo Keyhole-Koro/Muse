@@ -1,5 +1,7 @@
 const { Client, Events, GatewayIntentBits } = require('discord.js');
 const { token, testerId} = require('./config.json');
+const insertMsg = require('./database/json_insert_message.json');
+
 const guildId = testerId;
 
 const client = new Client({
@@ -23,9 +25,7 @@ client.on('messageCreate', message => {
     if (message.author.bot) {
         return;
     }
-
-    if (message.content == 'hi') {
-        message.channel.send('hi!');
+	insertMsg.insert(message);
     }
 });
 

@@ -1,4 +1,4 @@
-# Changelog for `muse`
+# Changelog for `ghc-muse`
 
 All notable changes to this project will be documented in this file.
 

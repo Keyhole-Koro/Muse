@@ -1,24 +1,24 @@
 [
-    {
-      "channel": {
-        "id": 123456,
-        "name": "Channel Name"
-      },
-      "category": {
-        "id": 1,
-        "name": "Sample Category"
-      },
-      "user": {
-        "id": 789012,
-        "name": "Keyhole#2314",
-        "name_id" : "korokororin"
-      },
-
-      "message" : {
-          "created_at": "2023-10-25",
-          "content" : "abcde12345",
-          "hash" : "xyz",
-          "length" : 10
-      }
-    },
+	{
+	  "channel": {
+		"id": 123456,
+		"name": "Channel Name"
+	  },
+	  "category": {
+		"id": 1,
+		"name": "Sample Category"
+	  },
+	  "user": {
+		"id": 789012,
+		"name": "Keyhole#2314",
+		"name_id" : "korokororin"
+	  },
+	  "message" : {
+		  "created_at": "2023-11-06T23:25:51.000Z",
+		  "content" : "abcde12345",
+		  "hash" : "xyz",
+		  "length" : 10,
+		  "num_mentions" : 0
+	  }
+	}
 ]

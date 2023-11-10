@@ -35,6 +35,7 @@ data JsonData = JsonData
     , user :: User
     , message :: Message
     } deriving (Show, Generic, FromJSON)
+    
 
 parseJSONFile :: FilePath -> IO (Maybe JsonData)
 parseJSONFile filePath = do
