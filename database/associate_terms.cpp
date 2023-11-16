@@ -73,6 +73,7 @@ public:
 		if (foundNode) return foundNode;
 
 		foundNode = searchNodeOnTree(root, cmpMethod, expectedNode);
+		std::cout << foundNode << std::endl;
 		if (foundNode) return foundNode;
 		
 		return nullptr;
@@ -81,15 +82,15 @@ public:
 	Node *searchNodeOnLinkingNode(Node *referentNode, bool (*cmpMethod)(Node *, Node *), Node *expectedNode) {
 		for (int i = 0; i < referentNode->linkingNodes.size(); i++) {
 			Node *node = referentNode->linkingNodes[i];
-			if (cmpMethod(node, expectedNode)) std::cout << "true" << std::endl;
 			if (cmpMethod(node, expectedNode)) return node;
 		}
 		return nullptr;
 	}
 
 	Node *searchNodeOnTree(Node *root, bool (*cmpMethod)(Node *, Node *), Node *expectedNode) {		
+		if (root == nullptr || cmpMethod(root, expectedNode)) std::cout << root << std::endl;
 		if (root == nullptr || cmpMethod(root, expectedNode)) return root;
-
+		
 		if (expectedNode->hash <= root->hash) return searchNodeOnTree(root->leftNode, cmpMethod, expectedNode);
 		else return searchNodeOnTree(root->rightNode, cmpMethod, expectedNode);
 		
@@ -115,11 +116,9 @@ public:
 			if (foundNode) continue;
 
 			foundNode = searchNodeOnTree(root, cmpTerm_Hash, expected_node);
-			if (foundNode) {
-				linkNode(curNode, foundNode);
-			} else {
-				insert(root, curNode);
-			}
+			if (!foundNode) insert(root, curNode);
+			linkNode(curNode, foundNode);
+			
 			printLinkingNodes(curNode);
 		}
 	}
@@ -130,9 +129,30 @@ public:
 			std::cout << linkingNode->term << " ";
 		}
 		std::cout << std::endl;
-}
+	}
+	Node* getRoot() const {
+		return root;
+	}
+
 };
 
+void printTree(Node* root) {
+    if (root != nullptr) {
+        printTree(root->leftNode);
+        std::cout << "Term: " << root->term << ", Hash: " << root->hash << std::endl;
+        std::cout << "Authors: ";
+        for (const User* author : root->authors) {
+            std::cout << author->name << " ";
+        }
+        std::cout << std::endl;
+        std::cout << "Linking Nodes: ";
+        for (const Node* linkingNode : root->linkingNodes) {
+            std::cout << linkingNode->term << " ";
+        }
+        std::cout << std::endl << std::endl;
+        printTree(root->rightNode);
+    }
+}
 
 void linkNodes(Node *linkingNode, Node *linkedNode) {
 	linkingNode->linkingNodes.push_back(linkedNode);
@@ -171,7 +191,9 @@ int main() {
 	//std::vector<std::string> input = ["MeCab","を","使っ","て","日本語","の","テキスト","から","名詞","を","抽出する","サンプルコード","です","。"];
 	tree.processTerms(input1, &user1);
 	tree.processTerms(input2, &user2);
-
+	
+	printTree(tree.getRoot());
+	
 	Node* curNode1 = makeNode(input1[0], &user1);
 	Node* curNode2 = makeNode(input2[2], &user2);
 
