@@ -45,7 +45,7 @@ int sum_charNode(const std::string &term) {
 class treeNode {
 private:
 	int num_globalNodes;
-	Node *root = nullptr;
+	Node *root_ = nullptr;
 public:
 	Node *make_insertNode(const std::string &term, User *author) {
 		Node *node = new Node{term, sum_charNode(term), {author}, {}, nullptr, nullptr};
@@ -102,8 +102,8 @@ public:
 
 	void processTerms(const std::vector<std::string>& input, User *author) {
 		//root is needed to be set
-		if (!root) {
-			root = make_insertNode(input[0], author);
+		if (!root_) {
+			root_ = make_insertNode(input[0], author);
 		}
 		for (int i = 0; i < input.size() - 1; i++) {
 			Node* curNode = make_insertNode(input[i], author);
@@ -115,8 +115,8 @@ public:
 			std::cout << "link " << foundNode << std::endl;
 			if (foundNode) continue;
 
-			foundNode = searchNodeOnTree(root, cmpTerm_Hash, expected_node);
-			if (!foundNode) insert(root, curNode);
+			foundNode = searchNodeOnTree(root_, cmpTerm_Hash, expected_node);
+			if (!foundNode) insert(root_, curNode);
 			linkNode(curNode, foundNode);
 			
 			printLinkingNodes(curNode);
@@ -131,7 +131,7 @@ public:
 		std::cout << std::endl;
 	}
 	Node* getRoot() const {
-		return root;
+		return root_;
 	}
 
 };

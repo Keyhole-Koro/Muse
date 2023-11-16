@@ -17,7 +17,7 @@ function num_mentions(message) {
 
 function construct_hash_msg(path_log_msg) {
 	const db = new database(path_log_msg, id_channel, removeChannel);
-	const hashValue = hashStringToNumber(readMessage());
+	const hashValue = utils.hashStringToNumber(readMessage());
 	db.modifyData("123456", { "message": { "hash": hash }});
 }
 
