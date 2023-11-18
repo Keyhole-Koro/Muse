@@ -1,0 +1,122 @@
+#include <iostream>
+#include <vector>
+
+const int ORDER = 3;  // Adjust the order of the B+ tree
+
+struct BPlusTreeNode {
+    std::vector<int> keys;
+    std::vector<BPlusTreeNode*> children;
+    BPlusTreeNode* nextLeaf;  // Pointer to the next leaf node
+
+    BPlusTreeNode() : nextLeaf(nullptr) {}
+};
+
+class BPlusTree {
+private:
+    BPlusTreeNode* root;
+
+    void insertInternal(BPlusTreeNode* node, int key);
+    BPlusTreeNode* splitChild(BPlusTreeNode* parent, int index);
+    void traverseLeafNodes(BPlusTreeNode* node);
+
+public:
+    BPlusTree() : root(nullptr) {}
+
+    void insert(int key);
+    void traverse();
+};
+
+void BPlusTree::insert(int key) {
+    if (root == nullptr) {
+        root = new BPlusTreeNode();
+        root->keys.push_back(key);
+    } else {
+        if (root->keys.size() == (2 * ORDER - 1)) {
+            BPlusTreeNode* newRoot = new BPlusTreeNode();
+            newRoot->children.push_back(root);
+            splitChild(newRoot, 0);
+            root = newRoot;
+        }
+        insertInternal(root, key);
+    }
+}
+
+void BPlusTree::insertInternal(BPlusTreeNode* node, int key) {
+    int i = node->keys.size() - 1;
+
+    while (i >= 0 && key < node->keys[i]) {
+        i--;
+    }
+    i++;
+
+    if (node->children.empty()) {  // Leaf node
+        node->keys.insert(node->keys.begin() + i, key);
+        if (node->keys.size() == (2 * ORDER)) {
+            BPlusTreeNode* newLeaf = splitChild(node, i);
+            newLeaf->nextLeaf = node->nextLeaf;
+            node->nextLeaf = newLeaf;
+        }
+    } else {  // Internal node
+        if (node->children[i]->keys.size() == (2 * ORDER - 1)) {
+            splitChild(node, i);
+            if (key > node->keys[i]) {
+                i++;
+            }
+        }
+
+        insertInternal(node->children[i], key);
+    }
+}
+
+BPlusTreeNode* BPlusTree::splitChild(BPlusTreeNode* parent, int index) {
+    BPlusTreeNode* child = parent->children[index];
+    BPlusTreeNode* newChild = new BPlusTreeNode();
+
+    parent->keys.insert(parent->keys.begin() + index, child->keys[ORDER - 1]);
+    parent->children.insert(parent->children.begin() + index + 1, newChild);
+
+    newChild->keys.assign(child->keys.begin() + ORDER, child->keys.end());
+    child->keys.erase(child->keys.begin() + ORDER, child->keys.end());
+
+    if (!child->children.empty()) {
+        newChild->children.assign(child->children.begin() + ORDER, child->children.end());
+        child->children.erase(child->children.begin() + ORDER, child->children.end());
+    }
+
+    return newChild;
+}
+
+void BPlusTree::traverse() {
+    if (root != nullptr) {
+        traverseLeafNodes(root);
+    }
+    std::cout << std::endl;
+}
+
+void BPlusTree::traverseLeafNodes(BPlusTreeNode* node) {
+    while (node != nullptr) {
+        for (int key : node->keys) {
+            std::cout << key << " ";
+        }
+        node = node->nextLeaf;
+    }
+}
+
+int main() {
+    BPlusTree bPlusTree;
+
+    // Inserting keys into the B+ tree
+    bPlusTree.insert(3);
+    bPlusTree.insert(7);
+    bPlusTree.insert(1);
+    bPlusTree.insert(5);
+    bPlusTree.insert(2);
+    bPlusTree.insert(4);
+    bPlusTree.insert(6);
+
+    // Traverse and print the B+ tree
+    std::cout << "B+ tree after insertion: ";
+    bPlusTree.traverse();
+
+    return 0;
+}
