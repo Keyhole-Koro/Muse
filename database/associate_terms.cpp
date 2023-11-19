@@ -2,28 +2,10 @@
 #include <string>
 #include <vector>
 
-/*
-implement cache by num_linked later
-*/
-
+//implement cache by num_linked later
 //recall roots()
 
 int ORDER = 3;
-
-Node *root_verb = nullptr;
-Node *root_adjective = nullptr;
-Node *root_subject = nullptr;
-Node *root_object = nullptr;
-Node *root_adverb = nullptr;
-Node *root_pronouce = nullptr;
-Node *root_interjunciton = nullptr;
-Node *root_conjunction = nullptr;
-Node *root_determiner = nullptr;
-Node *root_preposition  = nullptr;
-Node *root_particle = nullptr;
-Node *root_auxiliaryverb = nullptr;
-Node *root_symbol = nullptr;
-Node *root_other;
 
 typedef enum {
 	NOUN = 0,
@@ -32,7 +14,7 @@ typedef enum {
 	SUBJECT,
 	OBJECT,
 	ADVERB,
-	PRONOUNCE
+	PRONOUNCE,
 	INTERJECTION,
 	CONJUCTION,
 	DETERMINER,
@@ -50,35 +32,41 @@ struct Term {
 struct User {
 	int key;
 	std::string name;
-	unsigned __int16 id;
+	short unsigned int id;
 	std::string name_id;
 };
 
 typedef struct Node Node;
 
 struct BPTreeNode {
-	std::vector<Node*> keys;
-	std::vector<BPTreeNode*> children;
-	BPTreeNode *nextLeaf
-
-	BPTreeNode() : nextLeaf(nullptr) {}
+    std::vector<int> keys;
+    std::vector<BPTreeNode*> children;
+    BPTreeNode *nextLeaf;
+    std::vector<Node*> values;  // Vector to store multiple values for each key
+    BPTreeNode() : nextLeaf(nullptr) {}
 };
 
 struct BiTUser {
 	User *referentUser;
 	BiTUser *leftUser;
-	BiTUser *rightUser
-}
+	BiTUser *rightUser;
+};
 
-Node {
+struct NodeLink {
+	Node *referentNode;
+	NodeLink *leftNode;
+	NodeLink *rightNode;
+};
+
+struct Node {
 	int key;
 	Term *term;
-	BitUser *authors;
+	BiTUser *authors;
 	Node *referenceRoot;
-	unsigned __int16 num_previousNodes;
-	BiTNode *previousNodes;//before current node
-	unsigned __int16 num_nextNodes;
-	BiTNode *previousNodes;//after current node
+	short unsigned int num_previousNodes;
+	NodeLink *previousNodes;//before current node
+	short unsigned int num_nextNodes;
+	NodeLink *previousNodes;//after current node
 	Node *leftNode;
 	Node *rightNode;
 };
@@ -86,8 +74,23 @@ Node {
 void linkNode(Node *linkingNode, Node *linkedNode);
 bool cmpHash_Term(Node *node1, Node *node2);
 
+Node *root_verb = nullptr;
+Node *root_adjective = nullptr;
+Node *root_subject = nullptr;
+Node *root_object = nullptr;
+Node *root_adverb = nullptr;
+Node *root_pronouce = nullptr;
+Node *root_interjunciton = nullptr;
+Node *root_conjunction = nullptr;
+Node *root_determiner = nullptr;
+Node *root_preposition  = nullptr;
+Node *root_particle = nullptr;
+Node *root_auxiliaryverb = nullptr;
+Node *root_symbol = nullptr;
+Node *root_other = nullptr;
+
 //calculate the sum of characters
-int hashTerm(const std::string &term) {
+int hashStr(const std::string &term) {
 	int sum = 0;
 	for (char ch : term) {
 		sum += static_cast<int>(ch);
@@ -95,22 +98,35 @@ int hashTerm(const std::string &term) {
 	return sum;
 }
 
+bool cmpHash_Term(Node *node1, Node *node2) {
+	if (node1->key != node2->key) return false;
+	return node1->term->str == node2->term->str;
+}
+
+bool cmpAuthorKey_name(User *user1, User *user2) {
+	if (user1->key != user2->key) return false;
+	return user1->name == user2->name;
+}
+
 class BPTree {
 public:
-	void make_check_insertNode(Term term, User *author) {
-\		Node *node = makeNode(term, author);
-		Node *foundNode = searchNodeOnTree(cmpTerm_Hash, node);
-		if (foundNode) return;
-		insertToBPT(node);
+	Node *make_check_insertNode(Term term, User *author) {
+		Node *node = makeNode(term, author);
+		Node *nodeOnTree = insert(node);
+		insertAuthor(nodeOnTree->BiTUser, cmpAuthorKey_name, author);
+		return nodeOnTree;
 	}
 
-	void insert(Node *node) {
+	Node *insert(Node *node) {
 		Node *root = node->referenceRoot;
 		if (root == nullptr){
 			root = new BPTreeNode();
 			root->keys.push_back(node->key);
 			return;
 		}
+
+		Node *foundNode = searchNodeOnTree(cmpTerm_Hash, node);
+		if (foundNode) return foundNode;
 
 		if (root->keys.size() == (2 * ORDER - 1)) {
 			BPTreeNode *newRoot = new BPTreeNode();
@@ -119,10 +135,11 @@ public:
 			root = newRoot;
 		}
 		insertInternal(root, node);
+		return node;
 	}
 
 	void insertInternal(BPTreeNode *root, Node *node) {
-		int i = root->keys.size()-1;
+		int i = root->keys.size() - 1;
 
 		while (i >= 0 && node->key < root->keys[i]) {
 			i--;
@@ -131,6 +148,8 @@ public:
 
 		if (root->children.empty()) {
 			root->keys.insert(root->keys.begin() + i, node->key);
+			root->values.insert(root->values.begin() + i, node);
+
 			if (root->keys.size() == (2 * ORDER)) {
 				BPTreeNode *newLeaf = splitChild(root, i);
 				newLeaf->nextLeaf = root->nextLeaf;
@@ -138,6 +157,7 @@ public:
 			}
 			return;
 		}
+
 		if (root->children[i]->keys.size() == (2 * ORDER - 1)) {
 			splitChild(root, i);
 			if (node->key > root->keys[i]) i++;
@@ -161,8 +181,6 @@ public:
 		}
 		return newChild;
 	}
-
-	
 
 	void traverse(Node *root) {
 		if (root != nullptr) {
@@ -202,29 +220,23 @@ public:
    	 	return searchInternal(cmpMethod, expected_node);
 	}
 
-	Node *searchInternal(bool (*cmpMethod)(Node *, Node *), Node *expectedNode) {
-		BPTreeNode *root = expectedNode->referenceRoot;
-  	  	if (root == nullptr) return -1;
+	Node* searchInternal(bool (*cmpMethod)(Node*, Node*), Node* expectedNode) {
+		BPTreeNode* root = expectedNode->referenceRoot;
+		if (root == nullptr) return nullptr;
 
-    	int i = 0;
-    	while (i < root->keys.size() && expectedNode->key > root->keys[i]) {
-        	i++;
-    	}
-
-    	if (i < root->keys.size() && expectedNode->key == root->keys[i]) {
-        	if (cmpMethod(expectedNode, root->nextLeaf[i])) return root->nextLeaf[i];
-    	} else if (root->children.empty()) {
-       	 	return nullptr;
-    	} else {
-    	    return searchInternal(root->children[i], key);
-    	}
+		int i = 0;
+		while (i < root->keys.size() && expectedNode->key > root->keys[i]) {
+			i++;
+		}
+		if (i < root->keys.size() && expectedNode->key == root->keys[i]) {
+			for (size_t j = 0; j < root->values.size(); j++) {
+				if (cmpMethod(expectedNode, root->values[j])) return root->values[j];
+			}
+		} else if (!root->children.empty()) return searchInternal(cmpMethod, root->children[i]);
+		return nullptr;
 	}
 
 	void processTokens(Term tokens[], User *author) {
-		//root is needed to be set
-		if (!node->referenceRoot) {
-			node->referenceRoot = make_check_insertNode(tokens[0], author);
-		}
 		int jumptTimes = 0;
 		Node *nextNodeOnTree = make_check_insertNode(tokens[0], author);
 		for (int i = 0; i < sizeof(tokens)/sizeof(tokens[0])-1; i++) {
@@ -232,10 +244,8 @@ public:
 			nextNodeOnTree = make_check_insertNode(tokens[i+1], author);
 
 			Node *foundNextNode = nullptr;
-			if (nodeOnTree) curNodeOnTree = searchNodeOnLinkNode(curNodeOnTree->linkingNode, cmpHash_Term, nextNodeOnTree);
-			if (curNodeOnTree) continue;
 
-			linkNode(NodeOnTree, nextNodeOnTree);
+			linkNode(curNodeOnTree, nextNodeOnTree);
 
 			jumptTimes++;
 			std::cout << curNodeOnTree->num_nextNodes << std::endl;
@@ -243,53 +253,50 @@ public:
 	}
 };
 
+//make this abstract
+BiTNode *insertLink(BiTNode *root, bool (cmpMethod)(Node*, Node*), BiTNode *linkNode) {
+	if (root == nullptr) return linkNode;
+	if (cmpMethod(root->referentNode, linkedNode->referentNode)) return nullptr;//if it exists already, return nullptr to stop excess calculations
+
+	if (linkNode->referenceNode->key <= root->referentNode->key) {
+		root->leftNode = insertLink(root->leftNode, linkNode);
+	} else if (linkNode->referenceNode->key > root->referentNode->key) {
+		root->rightNode = insertLink(root->rightNode, linkNode);
+	}
+	return root;
+}
+
 BiTNode *makeLinkNode(Node *referenceNode) {
 	return new Node{referenceNode, nullptr, nullptr};
 }
 
 void linkNode(Node *linkingNode, Node *linkedNode) {
-	insertLink(linkingNode->nextNodes, makeLinkNode(linkedNode));
+	insertLink(linkingNode->nextNodes, cmpHash_Term, makeLinkNode(linkedNode));
 	linkingNode->num_nextNodes++;
 
-	insertLink(linkedNode->previousNodes, makeLinkNode(linkingNode));
+	insertLink(linkedNode->previousNodes, cmpHash_Term, makeLinkNode(linkingNode));
 	linkedNode->num_previousNodes++;
 }
 
-//make this abstract
-BiTNode *insertLink(BiTNode *root, BiTNode *linkNode) {
-	if (root == nullptr) return linkNode;
+BiTUser *insertAuthor(BiTUser *root, bool (cmpMethod)(User*, User*), User *user) {
+	if (root->referentUser = nullptr) return user;
+	if (cmpMethod(root->referentUser, user->referentUser)) return nullptr;//if it exists already, return nullptr to stop excess calculations
 
-	if (linkNode->referenceNode->key <= root->referentNode->key) {
-		root->leftNode = insertLink(root->leftNode, linkNode);
-	} else if (linkNode->referenceNode->key > root->referentNode->key) {
-		referentNode->rightNode = insertLink(root->rightNode, linkNode);
+	if (user->key <= root->referentUser->key) {
+		root->leftNode = insertAuthor(root->leftNode, cmpMethod, user);
+	} else if (user->key > root->referentUser->key) {
+		referentNode->rightNode = insertAuthor(root->rightNode, cmpMethod, user);
 	}
 	return root;
 }
 
-BitUser *insertAuthor(BitUser *root, BitUser *user) {
-	if (root = nullptr) return user;
-
-	if (user->key <= root->key) {
-		root->leftNode = insertAuthor(root->leftNode, user);
-	} else if (user->key > root->key) {
-		referentNode->rightNode = insertAuthor(root->rightNode, user);
-	}
-	return root;
-}
-
-bool cmpHash_Term(Node *node1, Node *node2) {
-	if (node1->key != node2->key) return false;
-	return node1->term->str == node2->term->str;
-}
-
-Node *makeNode(Term *term, BitUser *bituser) {
-	Node *node = new Node{hashTerm(term), term, bituser, referenceRoot(term->classes), 0, nullptr, 0, nullptr, -1, nullptr, nullptr};
+Node *makeNode(Term *term, BiTUser *bituser) {
+	Node *node = new Node{hashStr(term->str), term, bituser, rootReferent(term->classes), 0, nullptr, 0, nullptr, nullptr, nullptr};
 	return node;
 }
 
-User *makeUser(std::string name, int id, std::string name_id) {
-	User *user = new User{hashTerm(name+name_id), name, id, name_id};
+User *makeUser(std::string name, short unsigned int id, std::string name_id) {
+	User *user = new User{hashStr(name), name, id, name_id};
 	return user;
 }
 BitUser *makeBiTUser(User *user) {
@@ -301,7 +308,7 @@ void errorMsg(std::string msg) {
 	exit(1);
 }
 
-Node *referenceRoot(Classes c) {
+Node *rootReferent(Classes c) {
 	if (c == NOUN) return root_noun;
 	else if (c == PREPOSITON) return root_preposition;
 	else if (c == PARTICLE) return root_particle;
@@ -333,31 +340,91 @@ int main() {
 	tree.processTokens(input1, user1);
 	tree.processTokens(input2, user2);
 
-	Node* curNode1 = makeNode(input1[0], user1);
-	Node* curNode2 = makeNode(input2[2], user2);
+	Node* curNode1 = makeNode(&input1[0], user1);
+	Node* curNode2 = makeNode(&input2[2], user2);
 
-	NodeData* searchNode = tree.search(curNode1, cmpHash_Term, instance_intializedNode());
-
-	if (searchNode) {
-		std::cout << "Found Node: " << searchNode->term << std::endl;
-	} else {
-		std::cout << "Node not found." << std::endl;
-	}
-
-	NodeData* nodeToLink = tree.search(curNode2, cmpHash_Term, instance_intializedNode());
-	if (nodeToLink) {
-		NodeData* linkingNode = tree.search(curNode2, cmpHash_Term, instance_intializedNode());
-
-		if (linkingNode) {
-			tree.linkNode(linkingNode, nodeToLink);
-			std::cout << "Nodes linked successfully." << std::endl;
-		} else {
-			std::cout << "Linking node not found." << std::endl;
-		}
-	} else {
-		std::cout << "Node to link not found." << std::endl;
-	}
 	return 0;
 }
 
 //tokenize
+/*
+#include <iostream>
+#include <fstream>
+
+// Function to save Term data to a text file
+void saveTermToFile(const Term& term, std::ofstream& file) {
+    file << term.str << " " << term.word_class << std::endl;
+}
+
+// Function to save User data to a text file
+void saveUserToFile(const User& user, std::ofstream& file) {
+    file << user.key << " " << user.name << " " << user.id << " " << user.name_id << std::endl;
+}
+
+// Function to save BPTreeNode data to a text file
+void saveBPTreeNodeToFile(const BPTreeNode& node, std::ofstream& file) {
+    for (size_t i = 0; i < node.keys.size(); ++i) {
+        file << node.keys[i] << " ";
+    }
+    file << std::endl;
+
+    // Recursively save children
+    for (size_t i = 0; i < node.children.size(); ++i) {
+        saveBPTreeNodeToFile(*(node.children[i]), file);
+    }
+
+    // Save Node pointers
+    for (size_t i = 0; i < node.values.size(); ++i) {
+        file << node.values[i]->key << " ";
+    }
+    file << std::endl;
+}
+
+// Function to save BiTUser data to a text file
+void saveBiTUserToFile(const BiTUser& bitUser, std::ofstream& file) {
+    file << bitUser.referentUser->key << " " << bitUser.leftUser->referentUser->key << " "
+         << bitUser.rightUser->referentUser->key << std::endl;
+}
+
+// Function to save NodeLink data to a text file
+void saveNodeLinkToFile(const NodeLink& nodeLink, std::ofstream& file) {
+    file << nodeLink.referentNode->key << " " << nodeLink.leftNode->referentNode->key << " "
+         << nodeLink.rightNode->referentNode->key << std::endl;
+}
+
+// Function to save Node data to a text file
+void saveNodeToFile(const Node& node, std::ofstream& file) {
+    file << node.key << " ";
+    saveTermToFile(*(node.term), file);
+    saveBiTUserToFile(*(node.authors), file);
+    file << node.referenceRoot->key << " ";
+    file << node.num_previousNodes << " ";
+    saveNodeLinkToFile(*(node.previousNodes), file);
+    file << node.num_nextNodes << " ";
+    saveNodeLinkToFile(*(node.previousNodes), file);
+    file << node.leftNode->key << " " << node.rightNode->key << std::endl;
+}
+
+int main() {
+    // Example data
+    Term term1 = {"apple", Noun};
+    User user1 = {1, "John", 123, "john123"};
+    BPTreeNode bpNode;
+    BiTUser bitUser = {&user1, nullptr, nullptr};
+    NodeLink nodeLink = {nullptr, nullptr, nullptr};
+    Node node = {10, &term1, &bitUser, nullptr, 2, &nodeLink, 3, &nodeLink, nullptr, nullptr};
+
+    // Save data to a text file
+    std::ofstream outFile("data.txt");
+    saveTermToFile(term1, outFile);
+    saveUserToFile(user1, outFile);
+    saveBPTreeNodeToFile(bpNode, outFile);
+    saveBiTUserToFile(bitUser, outFile);
+    saveNodeLinkToFile(nodeLink, outFile);
+    saveNodeToFile(node, outFile);
+
+    outFile.close();
+
+    return 0;
+}
+*/

@@ -6,8 +6,10 @@ async function detect_spam(path_log_msg) {
 }
 
 function percent_match() {
+	const rate = 0;
 	const num_mentions = ;
-	const rate = ;
+	const machingRate = ;
+	rate = rate + (10 ** num_mentions) / 2;
 	return rate;
 }
 
