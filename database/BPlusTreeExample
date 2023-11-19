@@ -102,6 +102,50 @@ void BPlusTree::traverseLeafNodes(BPlusTreeNode* node) {
     }
 }
 
+void BPlusTree::searchInternal(BPlusTreeNode* node, int key) {
+    if (node == nullptr) {
+        return false;
+    }
+
+    int i = 0;
+    while (i < node->keys.size() && key > node->keys[i]) {
+        i++;
+    }
+
+    if (i < node->keys.size() && key == node->keys[i]) {
+        return true;
+    } else if (node->children.empty()) {
+        return false;
+    } else {
+        return searchInternal(node->children[i], key);
+    }
+}
+
+int BPlusTree::search(int key) {
+    return searchInternal(root, key);
+}
+
+int BPlusTree::searchInternal(BPlusTreeNode* node, int key) {
+    if (node == nullptr) {
+        return -1;  // Not found
+    }
+
+    int i = 0;
+    while (i < node->keys.size() && key > node->keys[i]) {
+        i++;
+    }
+
+    if (i < node->keys.size() && key == node->keys[i]) {
+        return node->values[i];  // Found: return the corresponding value
+    } else if (node->children.empty()) {
+        return -1;  // Not found
+    } else {
+        return searchInternal(node->children[i], key);
+    }
+}
+
+
+
 int main() {
     BPlusTree bPlusTree;
 
