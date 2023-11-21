@@ -1,15 +1,25 @@
 const fs = require('fs');
 const utils = require('../utils');
+const readline = require('readline');
+
+/*
+someday, ill make it extract each line by step, once you find due not passed, stop the program
+not to do excess sorting
+*/
 
 function isString(param) {
     return param instanceof String || typeof param === 'string';
 }
 
+function isNumber(param) {
+    return typeof param === 'number';
+}
+
 //add some exeptions
 class database {
-	constructor(referentPath, referentProperty, removalMethod) {
+	constructor(referentPath, referentPropertyToFind, removalMethod) {
 		this.referentPath = referentPath;
-		this.referentProperty = referentProperty;
+		this.referentPropertyToFind = referentPropertyToFind;
 		this.data = this.readDataFromFile();
 		this.removalMethod = removalMethod;
 	}
@@ -43,16 +53,33 @@ class database {
 		}
 	}
 
-	modifyData(expectedId, newData) {
-		const index = this.referentProperty(this.data, expectedId);
-		if (index !== -1) {
-			this.data[index] = { ...this.data[index], ...newData };
-			this.writeDataToFile(this.data);
-			console.log(`Object with ID ${expectedId} modified successfully.`);
-		} else {
-			console.log(`ID ${expectedId} not found.`);
+	findMatchingIndex(expectedId) {
+		const foundElements = this.referentPropertyToFind(this.data, expectedId);
+		if (isNumber(foundElements)) {
+			//even if the above variable is a number, make it a list
+			return [foundElements];
 		}
+		return foundElements;
 	}
+
+	getData(index) {
+		return this.data[index];
+	}
+
+	modifyData(expectedId, newData) {
+		const indices = this.findMatchingIndex(expectedId);
+		
+		if (indices.length > 0) {
+		  indices.forEach(index => {
+			this.data[index] = { ...this.data[index], ...newData };
+		  });
+	  
+		  this.writeDataToFile(this.data);
+		  console.log(`Objects with ID ${expectedId} modified successfully.`);
+		} else {
+		  console.log(`ID ${expectedId} not found.`);
+		}
+	  }
 
 	deleteData(expectedId) {
 		const newData = this.data.filter(item => item.channel.id !== expectedId);
@@ -63,8 +90,8 @@ class database {
 			console.log(`Object with ID ${expectedId} not found.`);
 		}
 	}
-	
-	removeExpiredChannels() {
+
+	removeExpiredObject() {
 		const cur_time = utils.JP_date();
 		this.removalMethod(this.data);
 		this.writeDataToFile(this.data);

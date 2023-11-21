@@ -31,6 +31,27 @@ module.exports = {
 
 		return parsedDate;
 	},
+
+	constructDate: function(daysToAdd, hoursToAdd) {
+		const currentDate = utils.JP_date();
+	
+		const dueDate = new Date(currentDate);
+		
+		if (daysToAdd !== undefined && daysToAdd !== null && daysToAdd > 0) {
+			dueDate.setDate(currentDate.getDate() + daysToAdd);
+		}
+	
+		if (hoursToAdd !== undefined && hoursToAdd !== null && hoursToAdd > 0) {
+			dueDate.setHours(currentDate.getHours() + hoursToAdd);
+		}
+	
+		const date = {
+			"created_at": currentDate,
+			"due": dueDate,
+		};
+	
+		return date;
+	},
 	
 	createVoiceChannel: async function(interaction, guild, channelName, parentCategory) {
 		try {
@@ -67,4 +88,22 @@ module.exports = {
 
 		return hashValue;
 	},
+
+	calculateHoursDifferenceFromNow: function(previous_date) {
+		const currentDate = new Date();
+		const timeDifference = parseInt((currentDate - previous_date) / (1000 * 60 * 60));
+		console.log("Time Difference: " + timeDifference + " hours");
+		return timeDifference;
+	},
+
+	isDue: function(due) {
+		if (calculateHoursDifferenceFromNow(due) > 0) {
+			return true;
+		}
+		return false;
+	},
+
+	numElements: function(list_) {
+		return list_.length;
+	}
 }

@@ -1,5 +1,5 @@
-const database = require('./json_handler.js');
-const utils = require('../utils');
+const database = require('../json_handler.js');
+const utils = require('.../utils');
 
 const id_channel = function(data, expectedId) {
 	const index = data.findIndex(item => item.channel.id === expectedId);
@@ -48,34 +48,6 @@ function constructChannel(type, channel, user, category, date, tags) {
 	return arrangedChannel;
 }
 
-//you can pass 0 as parameters
-function constructDate(daysToAdd, hoursToAdd) {
-	const currentDate = utils.JP_date();
-
-	const dueDate = new Date(currentDate);
-	
-	if (daysToAdd !== undefined && daysToAdd !== null && daysToAdd > 0) {
-		dueDate.setDate(currentDate.getDate() + daysToAdd);
-	}
-
-	if (hoursToAdd !== undefined && hoursToAdd !== null && hoursToAdd > 0) {
-		dueDate.setHours(currentDate.getHours() + hoursToAdd);
-	}
-
-	const date = {
-		"created_at": currentDate,
-		"due": dueDate,
-	};
-
-	return date;
-}
-
-function calculateHoursDifferenceFromNow(previous_date) {
-	const currentDate = new Date();
-	const timeDifference = parseInt((currentDate - previous_date) / (1000 * 60 * 60));
-	console.log("Time Difference: " + timeDifference + " hours");
-	return timeDifference;
-}
 const channel = {
 	"id": "123456",
 	"name": "Channel Name"
@@ -92,7 +64,7 @@ const user = {
 	"name_id": "korokoro"
 };
 
-const date = constructDate(1);
+const date = utils.constructDate(1);
 
 const tags = ["tag1", "tag2"];
 
@@ -101,7 +73,7 @@ console.log(arrangedChannel);
 
 const db = new database('./channel_manage.json', id_channel, removeChannel);
 
-db.removeExpiredChannels();
+db.removeExiredObject();
 
 db.insertData(arrangedChannel);
 //db.modifyData("123456", { "due": "2023-12-25" });

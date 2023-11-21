@@ -1,5 +1,5 @@
-const database = require('./json_handler.js');
-const utils = require('../utils');
+const database = require('../json_handler.js');
+const utils = require('.../utils');
 
 async function detect_spam(path_log_msg) {
 	const db = new database(path_log_msg, id_channel, removeChannel);
