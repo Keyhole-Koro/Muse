@@ -1,3 +1,4 @@
+const fs = require('fs');
 const { ChannelType, Permissions } = require('discord.js');
 
 //const highestPermission = {allow: Permissions.ALL}
@@ -7,17 +8,18 @@ module.exports = {
 		try {
 			const data = fs.readFileSync('./config.json', 'utf8');
 			const json_data = JSON.parse(data);
+			const admins = json_data.administrators;
+
+			for (const admin of admins) {
+				if (admin.id === user.id || admin.name_id === user.name_id) {
+					return true;
+				}
+			}
+			return false; 
 		} catch (error) {
 			console.error('Error reading data from file:', error);
+			return false;
 		}
-		const admins = json_data.administrators;
-		admins.forEach(admin => {
-			if (admin.id === user.id || admin.name_id === user.name_id) [
-				return true;
-			]
-		}
-		return false;
-		)
 	},
 
 	isString: function(param) {
@@ -58,7 +60,7 @@ module.exports = {
 	},
 
 	constructDate: function(daysToAdd, hoursToAdd) {
-		const currentDate = utils.JP_date();
+		const currentDate = this.JP_date();
 	
 		const dueDate = new Date(currentDate);
 		
@@ -122,7 +124,7 @@ module.exports = {
 	},
 
 	isDue: function(due) {
-		if (calculateHoursDifferenceFromNow(due) > 0) {
+		if (this.calculateHoursDifferenceFromNow(due) > 0) {
 			return true;
 		}
 		return false;
@@ -131,11 +133,21 @@ module.exports = {
 	numElements: function(list_) {
 		return list_.length;
 	},
+	
+	ifStrNumber: function(c) {
+		if (!this.isString(c)) {
+			throw new Error("invalid type of parameter at ifStrNumber()")
+		}
+		if (c >= '0' && c <= '9') {
+			return true;
+		}
+		return false;
+	},
 
 	ifRoleMention: function(mention_str) {
-		for (int i = 0; i < mention.length; i++) {
-			const c = mention.substring(i);
-			if !(c >= '0' && c <= '9') {
+		for (let i = 0; i < mention_str.length; i++) {
+			const c = mention_str.substring(i);
+			if (!this.ifStrNumber(c)) {
 				return false;
 			}
 		}
@@ -166,6 +178,4 @@ module.exports = {
 		}
 		return score;
 	}
-	  
-	  
 }

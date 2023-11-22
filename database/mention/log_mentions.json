@@ -1,41 +1,37 @@
 [
-    {
-        "user" : {
-            "name": "Keyhole",
-            "id": 1,
-            "name_id": "Keyhole_1"
-        },
+  {
+	"user": {
+	  "name": "Keyhole",
+	  "id": 1,
+	  "name_id": "Keyhole_1"
+	},
+	"mention": {
+	  "num_mentions": 1,
+	  "mentions": [
+		"234231"
+	  ]
+	},
+	"date": {
+	  "created_at": "2023-11-06T23:25:51.000Z",
+	  "due": "2023-11-07T23:25:51.000Z"
+	}
+  },
 
-        "mention": {
-            "num_mentions": 1,
-            "mentions": [
-                "@role1"
-            ]
-        },
-        
-        "date": {
-            "created_at": "2023-11-06T23:25:51.000Z",
-            "due": "2023-11-07T23:25:51.000Z"
-        }
-    },
-
-    {
-        "user" : {
-            "name": "Keyhole",
-            "id": 1,
-            "name_id": "Keyhole_1"
-        },
-
-        "mention": {
-            "num_mentions": 2,
-            "mentions": [
-                "@role3", "@role2"
-            ]
-        },
-
-        "date": {
-            "created_at": "2023-11-06T23:25:51.000Z",
-            "due": "2023-11-07T23:25:51.000Z"
-        }
-    }
+	{
+	"user": {
+	  "name": "Keyhole",
+	  "id": 2,
+	  "name_id": "Keyhole_2"
+	},
+	"mention": {
+	  "num_mentions": 1,
+	  "mentions": [
+		"234231"
+	  ]
+	},
+	"date": {
+	  "created_at": "2023-11-06T23:25:51.000Z",
+	  "due": "2023-11-07T23:25:51.000Z"
+	}
+  }
 ]
