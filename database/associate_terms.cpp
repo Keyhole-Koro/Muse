@@ -236,10 +236,11 @@ public:
 		return nullptr;
 	}
 
-	void processTokens(Term tokens[], User *author) {
+	int processTokens(Term tokens[], User *author) {
 		int jumptTimes = 0;
 		Node *nextNodeOnTree = make_check_insertNode(tokens[0], author);
 		for (int i = 0; i < sizeof(tokens)/sizeof(tokens[0])-1; i++) {
+			//if (jumptTimes >= ) return;
 			Node *curNodeOnTree = nextNodeOnTree;
 			nextNodeOnTree = make_check_insertNode(tokens[i+1], author);
 
@@ -250,6 +251,7 @@ public:
 			jumptTimes++;
 			std::cout << curNodeOnTree->num_nextNodes << std::endl;
 		}
+		return jumptTimes;
 	}
 };
 

@@ -1,19 +1,10 @@
 const fs = require('fs');
 const utils = require('../utils');
-const readline = require('readline');
 
 /*
 someday, ill make it extract each line by step, once you find due not passed, stop the program
 not to do excess sorting
 */
-
-function isString(param) {
-    return param instanceof String || typeof param === 'string';
-}
-
-function isNumber(param) {
-    return typeof param === 'number';
-}
 
 //add some exeptions
 class database {
@@ -55,7 +46,7 @@ class database {
 
 	findMatchingIndex(expectedId) {
 		const foundElements = this.referentPropertyToFind(this.data, expectedId);
-		if (isNumber(foundElements)) {
+		if (utils.isNumber(foundElements)) {
 			//even if the above variable is a number, make it a list
 			return [foundElements];
 		}
@@ -81,10 +72,9 @@ class database {
 		}
 	  }
 
-	deleteData(expectedId) {
-		const newData = this.data.filter(item => item.channel.id !== expectedId);
-		if (this.data.length !== newData.length) {
-			this.writeDataToFile(newData);
+	deleteData(index) {
+		if (this.data.length !== data[index].length) {
+			this.writeDataToFile(data[index]);
 			console.log(`Object with ID ${expectedId} deleted successfully.`);
 		} else {
 			console.log(`Object with ID ${expectedId} not found.`);

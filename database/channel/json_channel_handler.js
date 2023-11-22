@@ -25,7 +25,7 @@ function constructChannel(type, channel, user, category, date, tags) {
 	const arrangedChannel = {
 		"type": type || "",
 		"channel": {
-			"id": channel.id || "",
+			"id": channel.id || -1,
 			"name": channel.name || ""
 		},
 		"category": {
@@ -33,7 +33,7 @@ function constructChannel(type, channel, user, category, date, tags) {
 			"name": category.name || ""
 		},
 		"user": {
-			"id": user.id || "",
+			"id": user.id || -1,
 			"name": user.name || "",
 			"name_id": user.name_id || "",
 		},
@@ -49,7 +49,7 @@ function constructChannel(type, channel, user, category, date, tags) {
 }
 
 const channel = {
-	"id": "123456",
+	"id": 123456,
 	"name": "Channel Name"
 };
 
@@ -59,7 +59,7 @@ const category = {
 };
 
 const user = {
-	"id": "789012",
+	"id": 789012,
 	"name": "Keyhole",
 	"name_id": "korokoro"
 };

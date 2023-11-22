@@ -1,13 +1,14 @@
 const database = require('../json_handler.js');
 const utils = require('.../utils');
+const deal_mention = require('../mention/deal_mention.js');
 
 async function detect_spam(path_log_msg) {
 	const db = new database(path_log_msg, id_channel, removeChannel);
 }
 
-function percent_match() {
+function percent_match(user) {
 	const rate = 0;
-	const num_mentions = ;
+	const maliciousMentionRate = deal_mention.evaluatePreviousMentions(user);
 	const machingRate = ;
 	rate = rate + (10 ** num_mentions) / 2;
 	return rate;

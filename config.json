@@ -12,5 +12,11 @@
 			"db_password": "korokorokiho2018"
 		}
 	],
-	"administrators": []
+	"administrators": [
+		{
+			"name": "Keyhole",
+			"id": "1",
+			"name_id": "Keyhole_Koro"
+		}
+	]
 }

@@ -3,6 +3,31 @@ const { ChannelType, Permissions } = require('discord.js');
 //const highestPermission = {allow: Permissions.ALL}
 
 module.exports = {
+	ifAdmin: function(user) {
+		try {
+			const data = fs.readFileSync('./config.json', 'utf8');
+			const json_data = JSON.parse(data);
+		} catch (error) {
+			console.error('Error reading data from file:', error);
+		}
+		const admins = json_data.administrators;
+		admins.forEach(admin => {
+			if (admin.id === user.id || admin.name_id === user.name_id) [
+				return true;
+			]
+		}
+		return false;
+		)
+	},
+
+	isString: function(param) {
+		return param instanceof String || typeof param === 'string';
+	},
+	
+	isNumber: function(param) {
+		return typeof param === 'number';
+	},
+
 	JP_date: function() {
 	const current_date = new Date().toLocaleString({ timeZone: 'Asia/Tokyo' });
 	console.log(current_date);
@@ -105,5 +130,42 @@ module.exports = {
 
 	numElements: function(list_) {
 		return list_.length;
+	},
+
+	ifRoleMention: function(mention_str) {
+		for (int i = 0; i < mention.length; i++) {
+			const c = mention.substring(i);
+			if !(c >= '0' && c <= '9') {
+				return false;
+			}
+		}
+		return true;
+	},
+
+	ifUserMatch: function(user1, user2) {
+		if (user1.id === user2.id || user1.name_id === user2.name_id) {
+			return true;
+		}
+		return false;
+	},
+
+	constructUser: function(id, name, name_id) {
+		if (!isNumber(id) || !isString(name) || !isString(name_id)) {
+			throw new Error("invalid type of a parameter at constructUser()");
+		}
+		const user = {
+			"id": id,
+			"name": name,
+			"name_id": name_id
+		};
+	},
+
+	scoreToPercentage: function(score) {
+		if (score >= 100) {
+			return 100;
+		}
+		return score;
 	}
+	  
+	  
 }
