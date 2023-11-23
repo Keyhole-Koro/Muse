@@ -2,24 +2,9 @@ const fs = require('fs');
 const database = require('../json_handler.js');
 const utils = require('../../utils.js');
 
-const user_id = function(data, expectedId) {
-	const filteredData = data.filter(item => item.user.id === expectedId);
-	return filteredData;
-}
-
-const removeObject = function(data) {
-	const cur_time = utils.JP_date();
-
-	return data.filter(item => {
-		const due = utils.parse_dateStr(item.date.due);
-		const differenceComperedToDue = (due - cur_time)/(60*60*1000);
-		return differenceComperedToDue >= 0;
-	});
-};
-
 //make this handle the interval of mentions and save the result not to read everytime
 //add deleteData() but be carefull i, if an object is removed, the following objects will be shifted, dataMatch is copied one, be careful not toremove from it
-function evaluatePreviousMentions(user) {
+function evaluatePreviousMentions(db, user) {
     const dataMatch = db.findMatchingIndex(user.id);
     let score = 0;
     const basic_penalty = 30;
@@ -40,8 +25,7 @@ function evaluatePreviousMentions(user) {
             }
         });
     }
-
-    return utils.scoreToPercentage(score);
+    return score;
 }
 
 
@@ -75,11 +59,10 @@ const mention = {
 const date = utils.constructDate(0, 12);
 
 const arrangedObject = constructMentions(user, mention, date);
-console.log(arrangedObject);
 
-const db = new database('./log_mentions.json', user_id, removeObject);
+const db = new database('./log_mentions.json', utils.user_id, utils.ifDue);
 
-console.log(evaluatePreviousMentions(user));
+console.log(evaluatePreviousMentions(db, user));
 //db.removeExpiredObject();
 
 //db.insertData(arrangedObject);

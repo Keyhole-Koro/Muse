@@ -44,8 +44,8 @@ class database {
 		}
 	}
 
-	findMatchingIndex(expectedId) {
-		const foundElements = this.referentPropertyToFind(this.data, expectedId);
+	findMatchingData(expectedUser) {
+		const foundElements = this.referentPropertyToFind(this.data, expectedUser.id);
 		if (utils.isNumber(foundElements)) {
 			//even if the above variable is a number, make it a list
 			return [foundElements];
@@ -57,20 +57,20 @@ class database {
 		return this.data[index];
 	}
 
-	modifyData(expectedId, newData) {
-		const indices = this.findMatchingIndex(expectedId);
-		
-		if (indices.length > 0) {
-		  indices.forEach(index => {
-			this.data[index] = { ...this.data[index], ...newData };
-		  });
-	  
-		  this.writeDataToFile(this.data);
-		  console.log(`Objects with ID ${expectedId} modified successfully.`);
+	modifyData(expectedUser, newData) {
+		const foundData = this.findMatchingData(expectedUser.id);
+	
+		if (foundData.length > 0) {
+			foundData.forEach(data => {
+				data = { ...data, ...newData };
+			});
+	
+			this.writeDataToFile(this.data);
+			console.log(`Objects ${expectedUser} modified successfully.`);
 		} else {
-		  console.log(`ID ${expectedId} not found.`);
+			console.log(`${expectedUser} not found.`);
 		}
-	  }
+	}
 
 	deleteData(index) {
 		if (this.data.length !== data[index].length) {
@@ -80,10 +80,9 @@ class database {
 			console.log(`Object with ID ${expectedId} not found.`);
 		}
 	}
-
+	
 	removeExpiredObject() {
-		const cur_time = utils.JP_date();
-		this.removalMethod(this.data);
+		this.data = this.data.filter((obj) => !this.removalMethod(obj));
 		this.writeDataToFile(this.data);
 	}
 }

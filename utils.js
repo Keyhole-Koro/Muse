@@ -1,5 +1,6 @@
 const fs = require('fs');
 const { ChannelType, Permissions } = require('discord.js');
+const client = require('./index.js');
 
 //const highestPermission = {allow: Permissions.ALL}
 
@@ -177,5 +178,45 @@ module.exports = {
 			return 100;
 		}
 		return score;
-	}
+	},
+
+	ifDue: function(data) {
+		return data.filter(item => {
+			const due = utils.parse_dateStr(item.date.due);
+			return this.calculateHoursDifferenceFromNow(due) >= 0;
+		});
+	},
+
+	user_id: function(data, expectedId) {
+		const filteredData = data.filter(item => item.user.id === expectedId);
+		return filteredData;
+	},
+
+	num_mentions: function(message) {
+		return message.mentions.users.size + message.mentions.roles.size;
+	},
+
+	construct: function(author) {
+		const user = {
+			"name": author.username || "",
+			"id": author.id || -1,
+			"name_id": author.name_id || ""
+		}
+	},
+	  
+	  makeSilentRole: async function(guild, role_name, permission) {
+		try {
+		  return await guild.roles.create({
+			data: {
+			  name: role_name,
+			  permissions: permission,
+			},
+		  });
+	  
+		  console.log(`Created role ${role.name} with id ${role.id}`);
+		} catch(error) {
+		  console.error('Failed to create a new role:', error);
+		}
+	  }
+	
 }

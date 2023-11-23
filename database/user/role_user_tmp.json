@@ -1,0 +1,12 @@
+[
+    {
+        "user": {
+            "name": "Keyhole",
+            "id": 1,
+            "name_id": "Keyhole_1"
+        },
+        "roles": [
+            "12345"
+        ]
+    }
+]

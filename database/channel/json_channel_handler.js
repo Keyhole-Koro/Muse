@@ -6,17 +6,6 @@ const id_channel = function(data, expectedId) {
 	return index;
 }
 
-const removeChannel = function(data) {
-	const cur_time = utils.JP_date();
-
-	return data.filter(item => {
-		const due = utils.parse_dateStr(item.date.due);
-		const differenceComperedToDue = (due - cur_time)/(60*60*1000);
-		console.log(differenceComperedToDue);
-		return differenceComperedToDue >= 0;
-	});
-};
-
 const disableChannel = function(index) {
 	
 }
@@ -69,9 +58,8 @@ const date = utils.constructDate(1);
 const tags = ["tag1", "tag2"];
 
 const arrangedChannel = constructChannel("quickCreatedChannel", channel, user, category, date, tags);
-console.log(arrangedChannel);
 
-const db = new database('./channel_manage.json', id_channel, removeChannel);
+const db = new database('./channel_manage.json', id_channel, utils.ifDue);
 
 db.removeExiredObject();
 
