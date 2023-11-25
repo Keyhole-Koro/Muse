@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <utility>
 
 //implement cache by num_linked later
 //recall roots()
@@ -35,10 +36,9 @@ struct Term {
 
 
 struct BPTreeNode {
-    std::vector<int> keys;
+    std::vector<int, std::vector<Node*>> KeyValuePairs;
     std::vector<BPTreeNode*> children;
     BPTreeNode *nextLeaf;
-    std::vector<Node*> values;  // Vector to store multiple values for each key
     BPTreeNode() : nextLeaf(nullptr), children() {}
 
 };
@@ -164,21 +164,21 @@ BinaryTreeUser *insertuser(BinaryTreeUser *BiTroot, bool (cmpMethod)(User*, User
 
 class BPTree {
 private:
-	BPTreeNode *root_noun = nullptr;
-	BPTreeNode *root_verb = nullptr;
-	BPTreeNode *root_adjective = nullptr;
-	BPTreeNode *root_subject = nullptr;
-	BPTreeNode *root_object = nullptr;
-	BPTreeNode *root_adverb = nullptr;
-	BPTreeNode *root_pronouce = nullptr;
-	BPTreeNode *root_interjunciton = nullptr;
-	BPTreeNode *root_conjunction = nullptr;
-	BPTreeNode *root_determiner = nullptr;
-	BPTreeNode *root_preposition  = nullptr;
-	BPTreeNode *root_particle = nullptr;
-	BPTreeNode *root_auxiliaryverb = nullptr;
-	BPTreeNode *root_symbol = nullptr;
-	BPTreeNode *root_other = nullptr;
+	BPTreeNode *root_noun = new BPTreeNode();
+	BPTreeNode *root_verb = new BPTreeNode();
+	BPTreeNode *root_adjective = new BPTreeNode();
+	BPTreeNode *root_subject = new BPTreeNode();
+	BPTreeNode *root_object = new BPTreeNode();
+	BPTreeNode *root_adverb = new BPTreeNode();
+	BPTreeNode *root_pronouce = new BPTreeNode();
+	BPTreeNode *root_interjunciton = new BPTreeNode();
+	BPTreeNode *root_conjunction = new BPTreeNode();
+	BPTreeNode *root_determiner = new BPTreeNode();
+	BPTreeNode *root_preposition  = new BPTreeNode();
+	BPTreeNode *root_particle = new BPTreeNode();
+	BPTreeNode *root_auxiliaryverb = new BPTreeNode();
+	BPTreeNode *root_symbol = new BPTreeNode();
+	BPTreeNode *root_other = new BPTreeNode();
 
 public:
 	Node* make_check_insertNode(const Term* term, User* user) {
@@ -195,13 +195,12 @@ public:
 		if (!root){
 			printf("!root\n");
 			root = new BPTreeNode();
-			root->keys.push_back(node->key);
-			root->values.push_back(node);
+			root->KeyValuePairs.emplace_back(node->key, node);
 			return node;
 		}
 		printf("insert1\n");
 
-		Node *foundNode = searchNodeOnTree(cmpHash_Term, node);
+		Node *foundNode = searchNodeOnTree(cmpHash_Term, node);//this is not needed if it compares the node just before inserting
 		if (foundNode) {
 			printf("Node with key %d already exists. Returning found node.\n", node->key);
 			return foundNode;
@@ -209,10 +208,10 @@ public:
 
 		printf("insert2\n");
 
-		if (root->keys.size() == (2 * ORDER - 1)) {
+		if (root->KeyValuePairs.size() == (2 * ORDER - 1)) {
 			printf("Root is full. Creating a new root.\n");
 			BPTreeNode *newRoot = new BPTreeNode();
-			newRoot->children.push_back(root);
+			newRoot->children.emplace_back(root);
 			splitChild(newRoot, 0);
 			root = newRoot;
 		}
@@ -223,20 +222,17 @@ public:
 
 	void insertInternal(BPTreeNode *root, Node *node) {
 		printf("insertInternal\n");
-		int i = root->keys.size() - 1;
+		int i = root->KeyValuePairs.size() - 1;
 
-		while (i >= 0 && node->key < root->keys[i]) {
+		while (i >= 0 && node->key < root->KeyValuePairs[i].first) {
 			i--;
 		}
 		i++;
 
 		if (root->children.empty()) {
-			root->keys.insert(root->keys.begin() + i, node->key);
-			root->values.insert(root->values.begin() + i, node);
+			root->KeyValuePairs.insert(root->KeyValuePairs.begin() + i, std::make_pair(node->key, node));
 
-			printValueInVector(root->values);
-
-			if (root->keys.size() == (2 * ORDER)) {
+			if (root->KeyValuePairs.size() == (2 * ORDER)) {
 				printf("Leaf node is full. Splitting.\n");
 				BPTreeNode *newLeaf = splitChild(root, i);
 				newLeaf->nextLeaf = root->nextLeaf;
@@ -245,10 +241,10 @@ public:
 			return;
 		}
 
-		if (root->children[i]->keys.size() == (2 * ORDER - 1)) {
+		if (root->children[i]->KeyValuePairs.size() == (2 * ORDER - 1)) {
 			printf("Child node at index %d is full. Splitting.\n", i);
 			splitChild(root, i);
-			if (node->key > root->keys[i]) i++;
+			if (node->key > root->KeyValuePairs[i].first) i++;
 		}
 		insertInternal(root->children[i], node);
 	}
@@ -258,34 +254,17 @@ public:
 		BPTreeNode *child = parent->children[index];
 		BPTreeNode *newChild = new BPTreeNode();
 
-		parent->keys.insert(parent->keys.begin() + index, child->keys[ORDER - 1]);
+		parent->KeyValuePairs.insert(parent->KeyValuePairs.begin() + index, child->KeyValuePairs[ORDER - 1]);
 		parent->children.insert(parent->children.begin() + index + 1, newChild);
 
-		newChild->keys.assign(child->keys.begin() + ORDER, child->keys.end());
-		child->keys.erase(child->keys.begin() + ORDER, child->keys.end());
+		newChild->KeyValuePairs.assign(child->KeyValuePairs.begin() + ORDER, child->KeyValuePairs.end());
+		child->KeyValuePairs.erase(child->KeyValuePairs.begin() + ORDER, child->KeyValuePairs.end());
 
 		if (!child->children.empty()) {
 			newChild->children.assign(child->children.begin() + ORDER, child->children.end());
 			child->children.erase(child->children.begin() + ORDER, child->children.end());
 		}
 		return newChild;
-	}
-
-
-	void traverse(BPTreeNode *parent) {
-		if (parent != nullptr) {
-			traverseLeafNodes(parent);
-		}
-		std::cout << std::endl;
-	}
-
-	void traverseLeafNodes(BPTreeNode *parent) {
-		while (parent != nullptr) {
-			for (int key : parent->keys) {
-				std::cout << key << " ";
-			}
-			parent = parent->nextLeaf;
-		}
 	}
 
 	Node *search(BinaryTreeNode *BiTroot, bool (*cmpMethod)(Node *, Node *), Node *expectedNode) {
