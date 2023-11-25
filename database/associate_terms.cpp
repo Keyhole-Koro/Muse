@@ -8,7 +8,7 @@
 
 int ORDER = 3;
 
-typedef struct BPTreeNode BPTRreeNode;
+typedef struct BPTreeNode BPTreeNode;
 typedef struct Node Node;
 typedef struct User User;
 
@@ -107,7 +107,7 @@ bool cmpUserKey_name(User *user1, User *user2) {
 }
 
 User *makeUser(std::string name, short unsigned int id, std::string name_id) {
-	User *user = new User{hashStr(name), name, id, name_id};
+    User *user = new User{hashStr(name), name, id, name_id};
 	return user;
 }
 BinaryTreeUser *makeBinaryTreeUser(User *user) {
@@ -211,7 +211,7 @@ public:
 		if (root->KeyValuePairs.size() == (2 * ORDER - 1)) {
 			printf("Root is full. Creating a new root.\n");
 			BPTreeNode *newRoot = new BPTreeNode();
-			newRoot->children.emplace_back(root);
+			newRoot->children.__emplace_back(root);
 			splitChild(newRoot, 0);
 			root = newRoot;
 		}
@@ -293,12 +293,12 @@ public:
 		if (parent == nullptr) return nullptr;
 
 		int i = 0;
-		while (i < parent->keys.size() && expectedNode->key > parent->keys[i]) {
+		while (i < parent->KeyValuePairs.size() && expectedNode->key > parent->KeyValuePairs[i]) {
 			i++;
 		}
-		if (i < parent->keys.size() && expectedNode->key == parent->keys[i]) {
-			for (size_t j = 0; j < parent->values.size(); j++) {
-				if (cmpMethod(expectedNode, parent->values[j])) return parent->values[j];
+		if (i < parent->KeyValuePairs.size() && expectedNode->key == parent->KeyValuePairs[i]) {
+			for (size_t j = 0; j < parent->KeyValuePairs.size(); j++) {
+				if (cmpMethod(expectedNode, parent->KeyValuePairs[j])) return parent->KeyValuePairs[j];
 			}
 		} else if (!parent->children.empty()) return searchInternal(parent->children[i], cmpMethod, expectedNode);
 		return nullptr;
@@ -356,20 +356,10 @@ public:
 	
 };
 
-void printValueInVector(const std::vector<Node*>& values) {
-		printf("Values in vector: ");
-		for (const auto& value : values) {
-			printf("%d ", value->key);
-		}
-		printf("\n");
-	}
-
-
-
 int main() {
     BPTree tree;
 
-    std::vector<Term> input1 = {{"apple", NOUN}, {"banana", NOUN}, {"cherry", NOUN}};
+    std::vector<Term> input1 = {("apple", NOUN}, {"banana", NOUN}, {"cherry", NOUN}};
     std::vector<Term> input2 = {{"banana", NOUN}, {"cherry", NOUN}, {"grape", NOUN}};
 
     User *user1 = makeUser("Alice", 1, "Alice_1");

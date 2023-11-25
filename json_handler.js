@@ -1,5 +1,5 @@
 const fs = require('fs');
-const utils = require('../utils');
+const utils = require('./utils');
 
 /*
 someday, ill make it extract each line by step, once you find due not passed, stop the program

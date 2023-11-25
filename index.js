@@ -1,10 +1,11 @@
 const { Client, Events, GatewayIntentBits } = require('discord.js');
 const { token, testerId} = require('./config.json');
 const utils = require('./utils.js');
-const json_handler = require('./database/json_handler.js')
-const deal_mention = require('./database/channel/deal_mentions.js');
+
+const database = require('./json_handler.js');
+const deal_mention = require('./database/mention/deal_mention.js');
 const user_handler = require('./database/user/json_user_handler.js')
-const user_handler = require('./database/anti_spam/anti_spam.js')
+const anti_spam = require('./database/anti_spam/anti_spam.js')
 
 const guildId = testerId;
 
@@ -18,8 +19,8 @@ const client = new Client({
 });
 
 const json_info_user = new database('./database/user/info_user.json', utils.user_id, utils.ifDue);
-const json_channel = new database('./database/channel_manage.json', utils.user_id, utils.ifDue);
-const json_mention = new database('./database/log_mentions.json', utils.user_id, utils.ifDue);
+const json_channel = new database('./database/channel/channel_manage.json', utils.user_id, utils.ifDue);
+const json_mention = new database('./database/mention/log_mentions.json', utils.user_id, utils.ifDue);
 
 const makeVCComnd = require('./commands/makeVC.js');
 
@@ -37,7 +38,7 @@ client.on('messageCreate', message => {
 		//test not yet
 		const score = deal_mention.evaluatePreviousMentions(json_mention, user);
 		if (score >= 100) {
-			await anti_spam.makeUserSilent(message.guild, message.author, 10);
+			anti_spam.makeUserSilent(message.guild, message.author, 10);
 		}
 		user_handler.updateScore(json_info_user, user, score);
 	}

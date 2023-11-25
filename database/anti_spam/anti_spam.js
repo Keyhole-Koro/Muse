@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
-const database = require('../json_handler.js');
-const utils = require('.../utils');
+const database = require('../../json_handler.js');
+const utils = require('../../utils.js');
 const deal_mention = require('../mention/deal_mention.js');
 const info_user_handler = require('../user/json_user_handler.js');
 
@@ -11,7 +11,7 @@ async function detect_spam(path_log_msg) {
 function rate_malicious(user) {
 	const rate = 0;
 	const maliciousMentionScore = deal_mention.evaluatePreviousMentions(user);
-	const machingRate = ;
+	const machingRate = 0;
 	return rate;
 }
 

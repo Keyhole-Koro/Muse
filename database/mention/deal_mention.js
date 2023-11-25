@@ -1,11 +1,11 @@
 const fs = require('fs');
-const database = require('../json_handler.js');
+const database = require('../../json_handler.js');
 const utils = require('../../utils.js');
 
 //make this handle the interval of mentions and save the result not to read everytime
 //add deleteData() but be carefull i, if an object is removed, the following objects will be shifted, dataMatch is copied one, be careful not toremove from it
 function evaluatePreviousMentions(db, user) {
-    const dataMatch = db.findMatchingIndex(user.id);
+    const dataMatch = db.findMatchingData(user.id);
     let score = 0;
     const basic_penalty = 30;
 
@@ -56,6 +56,7 @@ const mention = {
 	"mentions": ["role3", "role1"]
 };
 
+/*
 const date = utils.constructDate(0, 12);
 
 const arrangedObject = constructMentions(user, mention, date);
@@ -68,5 +69,5 @@ console.log(evaluatePreviousMentions(db, user));
 //db.insertData(arrangedObject);
 //db.modifyData("123456", { "due": "2023-12-25" });
 //db.deleteData("123456");
-
+*/
 module.exports = evaluatePreviousMentions;
