@@ -1,0 +1,21 @@
+[
+    {
+        "user": {
+            "name": "Keyhole",
+            "id": 1,
+            "name_id": "Keyhole_1"
+        },
+        "score": {
+            "score_mention": 40
+        },
+
+        "penelties": [
+
+        ],
+        "date": {
+            "join": "2023-11-06T23:25:51.000Z",
+            "leave": "2023-11-07T23:25:51.000Z",
+            "TimesJoin": 1
+        }
+    }
+]
