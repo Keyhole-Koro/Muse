@@ -2,8 +2,8 @@ const { Client, Events, GatewayIntentBits } = require('discord.js');
 const { token, testerId} = require('./config.json');
 const utils = require('./utils.js');
 
-const database = require('./json_handler.js');
-const deal_mention = require('./database/mention/deal_mention.js');
+const json_db = require('./json_handler.js');
+const evaluatePreviousMentions = require('./database/mention/deal_mention.js');
 const user_handler = require('./database/user/json_user_handler.js')
 const anti_spam = require('./database/anti_spam/anti_spam.js')
 
@@ -18,9 +18,9 @@ const client = new Client({
 	],
 });
 
-const json_info_user = new database('./database/user/info_user.json', utils.user_id, utils.ifDue);
-const json_channel = new database('./database/channel/channel_manage.json', utils.user_id, utils.ifDue);
-const json_mention = new database('./database/mention/log_mentions.json', utils.user_id, utils.ifDue);
+const json_info_user = new json_db('./database/user/info_user.json', utils.user_id, utils.ifDue);
+const json_channel = new json_db('./database/channel/channel_manage.json', utils.user_id, utils.ifDue);
+const json_mention = new json_db('./database/mention/log_mentions.json', utils.user_id, utils.ifDue);
 
 const makeVCComnd = require('./commands/makeVC.js');
 
@@ -33,10 +33,11 @@ client.on('messageCreate', message => {
     if (message.author.bot) {
         return;
     }
-	const user = utils.constractUser(mention.author);
-	if (num_mentions(message) > 0) {
+	const user = utils.constructUserFromMsgAuthor(message.author);
+	if (utils.num_mentions(message) > 0) {
 		//test not yet
-		const score = deal_mention.evaluatePreviousMentions(json_mention, user);
+		const score = evaluatePreviousMentions(json_mention, user);
+		console.log(score);
 		if (score >= 100) {
 			anti_spam.makeUserSilent(message.guild, message.author, 10);
 		}

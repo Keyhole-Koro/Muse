@@ -5,6 +5,7 @@ const utils = require('../../utils.js');
 //make this handle the interval of mentions and save the result not to read everytime
 //add deleteData() but be carefull i, if an object is removed, the following objects will be shifted, dataMatch is copied one, be careful not toremove from it
 function evaluatePreviousMentions(db, user) {
+    console.log(user);
     const dataMatch = db.findMatchingData(user.id);
     let score = 0;
     const basic_penalty = 30;

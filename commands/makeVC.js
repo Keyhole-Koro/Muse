@@ -1,7 +1,8 @@
 const { SlashCommandBuilder } = require('discord.js');
+
 const { vc_category } = require('../config.json');
 
-const createVoiceChannel = require('../utils.js');
+const utils = require('../utils.js');
 
 const makeVCCommand = new SlashCommandBuilder()
     .setName('makevc')
@@ -20,7 +21,7 @@ module.exports = {
         const vcName = interaction.options.getString('vcname');
 
 		try {
-            const voiceChannel = await createVoiceChannel(interaction, guild, vcName, vc_category)
+            const voiceChannel = await utils.createVoiceChannel(interaction, guild, vcName, vc_category)
             await interaction.reply(`Voice channel "${voiceChannel}" created successfully! It will disappear in 24 hours.`);
             
             //replace here to use databse

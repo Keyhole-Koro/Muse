@@ -161,18 +161,7 @@ module.exports = {
 		}
 		return false;
 	},
-
-	constructUser: function(id, name, name_id) {
-		if (!isNumber(id) || !isString(name) || !isString(name_id)) {
-			throw new Error("invalid type of a parameter at constructUser()");
-		}
-		const user = {
-			"id": id,
-			"name": name,
-			"name_id": name_id
-		};
-	},
-
+	
 	scoreToPercentage: function(score) {
 		if (score >= 100) {
 			return 100;
@@ -196,12 +185,14 @@ module.exports = {
 		return message.mentions.users.size + message.mentions.roles.size;
 	},
 
-	construct: function(author) {
+	constructUserFromMsgAuthor: function(author) {
+		console.log(author);
 		const user = {
-			"name": author.username || "",
+			"name": author.globalName || "",
 			"id": author.id || -1,
-			"name_id": author.name_id || ""
+			"name_id": author.username || ""
 		}
+		return user;
 	},
 	  
 	  makeSilentRole: async function(guild, role_name, permission) {

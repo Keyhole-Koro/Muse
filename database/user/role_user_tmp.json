@@ -5,7 +5,7 @@
             "id": 1,
             "name_id": "Keyhole_1"
         },
-        "roles": [
+        "roleIDs": [
             "12345"
         ]
     }
