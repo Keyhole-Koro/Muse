@@ -1,13 +1,13 @@
 const client = require('../../index.js');
 
 function updateScore(db, user, score) {
+    console.log("1");
     db.modifyData(user, { "score_mention": score });
+    console.log("2");
 }
 
-function saveRoles(db, guild, user) {
+function saveRoles(db, guild, member) {
     try {
-        const member = guild.members.cache.get(user.id);
-
         const roles = member.roles.cache.array();
         const roleIDs = roles.map(role => role.id);
 
@@ -19,17 +19,21 @@ function saveRoles(db, guild, user) {
 
 }
 
-function restoreRoles(db, guild, user) {
+function restoreRoles(db, guild, member) {
     try {
-        const member = guild.members.cache.get(user.id);
-
         const foundData = db.findMatchingData(user.id);
 
         const rolesToAdd = foundData.roleIDs;
 
-        await member.roles.add(rolesToAdd);
+        member.roles.add(rolesToAdd);
 
     } catch (error) {
         console.error('Error as to fetching a member or adding roles:', error);
     }
+}
+
+module.exports = {
+    updateScore,
+    saveRoles,
+    restoreRoles
 }

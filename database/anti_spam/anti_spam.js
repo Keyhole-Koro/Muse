@@ -21,21 +21,22 @@ function construct_hash_msg(path_log_msg) {
 	db.modifyData("123456", { "message": { "hash": hash }});
 }
 
-async function makeUserSilent(guild, author, penalty_time) {
-  info_user_handler.saveRoles(author);
+async function makeUserSilent(roleDB, guild, user, penalty_time) {
+  info_user_handler.saveRoles(roleDB, guild, member);
   const role_name = "silent" + penalty_time.toString();
 
+  const member = guild.members.cache.get(user.id);
   try {
     let role = guild.roles.cache.find(role => role.name === role_name);
     if (!role) {
       role = await utils.makeSilentRole(guild, role_name, [{ SEND_MESSAGES: false }]);
     }
-    author.roles.add(role);
+    member.roles.add(role);
 
     setTimeout(() => {
-      author.roles.remove(role);
-	  info_user_handler.restoreRoles(author);
-      console.log(`Removed role ${role.name} from ${author.username}`);
+      member.roles.remove(role);
+	  info_user_handler.restoreRoles(roleDB, guild, member);
+      console.log(`Removed role ${role.name} from ${user.username}`);
     }, penalty_time);
   } catch(error) {
     console.error('Error:', error);

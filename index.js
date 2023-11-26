@@ -21,6 +21,7 @@ const client = new Client({
 const json_info_user = new json_db('./database/user/info_user.json', utils.user_id, utils.ifDue);
 const json_channel = new json_db('./database/channel/channel_manage.json', utils.user_id, utils.ifDue);
 const json_mention = new json_db('./database/mention/log_mentions.json', utils.user_id, utils.ifDue);
+const json_role = new json_db('./database/user/role_user_tmp.json', utils.user_id, utils.dummy_removelMethod);
 
 const makeVCComnd = require('./commands/makeVC.js');
 
@@ -39,7 +40,7 @@ client.on('messageCreate', message => {
 		const score = evaluatePreviousMentions(json_mention, user);
 		console.log(score);
 		if (score >= 100) {
-			anti_spam.makeUserSilent(message.guild, message.author, 10);
+			anti_spam.makeUserSilent(json_role, message.guild, user, 10);
 		}
 		user_handler.updateScore(json_info_user, user, score);
 	}

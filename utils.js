@@ -176,6 +176,10 @@ module.exports = {
 		});
 	},
 
+	dummy_removalMethod: function(data) {
+		return false;
+	},
+
 	user_id: function(data, expectedId) {
 		const filteredData = data.filter(item => item.user.id === expectedId);
 		return filteredData;

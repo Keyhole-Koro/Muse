@@ -57,20 +57,30 @@ class database {
 		return this.data[index];
 	}
 
-	modifyData(expectedUser, newData) {
+	modifyData(expectedUser, newData, newWholeDataInCase) {
 		const foundData = this.findMatchingData(expectedUser.id);
-	
-		if (foundData.length > 0) {
-			foundData.forEach(data => {
-				data = { ...data, ...newData };
-			});
-	
-			this.writeDataToFile(this.data);
-			console.log(`Objects ${expectedUser} modified successfully.`);
-		} else {
-			console.log(`${expectedUser} not found.`);
+	  
+		if (!newWholeDataInCase) {
+			console.error("you need to pass newWholeDataInCase")
 		}
-	}
+		if (!foundData && newWholeDataInCase) {
+		  this.insertData(newWholeDataInCase);
+		}
+	  
+		if (foundData.length > 0) {
+		  foundData.forEach(data => {
+			data = { ...data, ...newData };
+		  });
+	  
+		  this.writeDataToFile(this.data);
+		  console.log(`Objects ${expectedUser} modified successfully.`);
+		  return true; // Data found and modified
+		} else {
+		  console.log(`${expectedUser} found, but data is empty.`);
+		  return false; // Data found but empty
+		}
+	  }
+	  
 
 	deleteData(index) {
 		if (this.data.length !== data[index].length) {
