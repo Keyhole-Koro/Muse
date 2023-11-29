@@ -5,9 +5,10 @@ const { applicationId, testerId, token } = require('./config.json');
 const guildId = testerId;
 
 const makeVCComnd = require('./commands/makeVC.js');
-
-const commands = [makeVCComnd.data.toJSON()];
-const rest = new REST({ version: 'v10' }).setToken(token);
+const payComnd = require('./commands/pay.js');
+console.log(payComnd.data);
+const commands = [makeVCComnd.data, payComnd.data];
+const rest = new REST({ version: '10' }).setToken(token);
 
 (async () => {
     try {
@@ -15,9 +16,8 @@ const rest = new REST({ version: 'v10' }).setToken(token);
             Routes.applicationGuildCommands(applicationId, guildId),
             { body: commands }
         );
-        console.log('The command is set');
+        console.log('The commands are set');
     } catch (error) {
-        console.error('An error occurred while setting the command:', error);
+        console.error('An error occurred while setting the commands:', error);
     }
 })();
-

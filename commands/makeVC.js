@@ -12,7 +12,7 @@ const makeVCCommand = new SlashCommandBuilder()
         .setRequired(true));
 
 module.exports = {
-    data: [makeVCCommand.toJSON()],
+    data: makeVCCommand.toJSON(),
     async execute(interaction) {
         //make sure cooltime
         

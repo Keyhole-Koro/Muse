@@ -5,6 +5,37 @@ const client = require('./index.js');
 //const highestPermission = {allow: Permissions.ALL}
 
 module.exports = {
+	EventType: {
+		INTERACTION: 1,
+		API: 2,
+	},
+	
+	eventInteraction: class{
+		constructor(customId) {
+		this.type = EventType.INTERACTION;
+		this.eventId = customId; // Set eventId to customId of the provided event
+		this.expectedDataType = EventType.INTERACTION;
+		this.action = async (interaction) => {
+			await this.action(interaction);
+		};
+		this.response = async (interaction) => {
+			await this.response(interaction);
+		};
+		this.if_allowBack = false;
+		}
+	},	
+	
+	eventAPI: class {
+		constructor(event) {
+			this.type = EventType.API;
+			this.eventId = event.id;
+			this.expectedDataType = undefined;
+			this.action = event.action;
+			this.response = event.response;
+			this.if_allowBack = false;
+		}
+	},
+
 	ifAdmin: function(user) {
 		try {
 			const data = fs.readFileSync('./config.json', 'utf8');
